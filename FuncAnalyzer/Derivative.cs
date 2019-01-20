@@ -120,7 +120,7 @@ namespace FuncAnalyzer
         {
             public root(constant left, localexpression right)
             {
-                if(left.value)
+                if()
             }
             public override Expression Original
             {
