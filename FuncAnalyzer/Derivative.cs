@@ -90,8 +90,13 @@ namespace FuncAnalyzer
                     return left.Original;
                 else if (left is constant & (!(right is constant) & !(right is parameter)))
                     return Expression.Multiply(left.Original, right.GetDerivative(param));
+                else if(right is constant & (!(left is constant) & !(left is parameter)))
+                    return Expression.Multiply(right.Original, left.GetDerivative(param));
                 else
-                    return Expression.Add(Expression.Multiply(left.GetDerivative(param), right.Original), Expression.Multiply(left.Original, right.GetDerivative(param)));
+                    return Expression.Add(
+                        Expression.Multiply(left.GetDerivative(param), right.Original),
+                        Expression.Multiply(left.Original, right.GetDerivative(param))
+                        );
             }
 
             public override string ToString() => left.ToString() + "*" + right.ToString();
@@ -106,6 +111,32 @@ namespace FuncAnalyzer
                     Expression.Subtract(
                         Expression.Multiply(left.GetDerivative(param),right.Original),
                         Expression.Multiply(left.Original,right.GetDerivative(param))),
+                    Expression.Call(null, typeof(Math).GetMethod("Pow"), right.Original, Expression.Constant(2)));
+
+            public override string ToString() => left.ToString() + "/" + right.ToString();
+        }
+
+        protected class root : localexpression
+        {
+            public root(constant left, localexpression right)
+            {
+                if(left.value)
+            }
+            public override Expression Original
+            {
+                get
+                {
+                    if (left is constant & (left as constant).value == 2.0) return Expression.Call(null, typeof(Math).GetMethod("Sqrt"), right.Original);
+                    else if (left is constant) return Expression.Call(null, typeof(Math).GetMethod("Pow"), right.Original, Expression.Divide(Expression.Constant(1), Expression.Constant((left as constant).value)));
+                    else if (left is parameter) return Expression.Call(null, typeof(Math).GetMethod("Pow"), right.Original, Expression.Divide(Expression.Constant(1), (left as parameter).parameter));
+                    else throw new InvalidOperationException("Left value of root must be a natural");
+                }
+            }
+            public override Expression GetDerivative(ParameterExpression param) =>
+                Expression.Divide(
+                    Expression.Subtract(
+                        Expression.Multiply(left.GetDerivative(param), right.Original),
+                        Expression.Multiply(left.Original, right.GetDerivative(param))),
                     Expression.Call(null, typeof(Math).GetMethod("Pow"), right.Original, Expression.Constant(2)));
 
             public override string ToString() => left.ToString() + "/" + right.ToString();
