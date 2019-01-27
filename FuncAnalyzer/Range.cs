@@ -11,8 +11,24 @@ namespace FuncAnalyzer
 
         }
 
-        public bool IsValidValue()
+        public bool IsValidValue(double value)
         { }
+
+        public double Minimum
+        {
+            get
+            {
+
+            }
+        }
+
+        public double Maximum
+        {
+            get
+            {
+
+            }
+        }
 
         public static readonly Range Natural = new Range();
     }
